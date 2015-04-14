@@ -73,7 +73,7 @@ module.exports = function (options) {
         opts.onError(err);
         return cb();
       }
-      
+
       err.lineNumber = err.line;
       err.fileName = err.file;
 
