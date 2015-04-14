@@ -65,37 +65,33 @@ module.exports = function (options) {
 
     opts.error = function (err) {
 
-      // WIP always on error handler
-
-      gutil.log('MISTAKE MISTAKE ' + err.message + ' on line ' + err.line + ' in ' + err.file);
-      gutil.log('MISTAKE MISTAKE ' + err);
-
-      var err_msg_css = 'html { padding: 18px 36px; }' +
-                     'head { display: block; }' +
-                     'body { margin: 0; padding: 0; }' +
-                     'body > * { display: none !important; }' +
-                     'head:after, body:before, body:after { display: block !important; }' +
-                     'head:after { font-family: sans-serif; font-size: large; font-weight: bold; content: "Error compiling CSS asset"; }' +
-                     'body:before, body:after { font-family: monospace; white-space: pre-wrap; }';
-
-      err_msg_css += 'body:before { content: "\\00000a';
-      err_msg_css += err.message.replace(/"/g, '\\000022').replace(/\n/g, '\\00000a').replace(/\t/g, '    ');
-      err_msg_css += '"; }';
-
-      err_msg_css += 'body:after { content: "\\00000a';
-      err_msg_css += err.file.replace('/', '\\00002f');
-      err_msg_css += ':';
-      err_msg_css += err.line;
-      err_msg_css += '"; }';
-
-      file.path = ext(file.path, '.css');
-      file.contents = new Buffer(err_msg_css);
-      return cb(null, file);
-
-
       if (opts.errLogToConsole) {
         gutil.log(gutil.colors.red('[gulp-sass]', err.message, 'on line', err.line + 'in', err.file));
         return cb();
+      }
+
+      if (opts.errLogToCSS) {
+        var err_msg_css = 'html { padding: 18px 36px; }' +
+                       'head { display: block; }' +
+                       'body { margin: 0; padding: 0; }' +
+                       'body > * { display: none !important; }' +
+                       'head:after, body:before, body:after { display: block !important; }' +
+                       'head:after { font-family: sans-serif; font-size: large; font-weight: bold; content: "Error compiling CSS asset"; }' +
+                       'body:before, body:after { font-family: monospace; white-space: pre-wrap; }';
+
+        err_msg_css += 'body:before { content: "\\00000a';
+        err_msg_css += err.message.replace(/"/g, '\\000022').replace(/\n/g, '\\00000a').replace(/\t/g, '    ');
+        err_msg_css += '"; }';
+
+        err_msg_css += 'body:after { content: "\\00000a';
+        err_msg_css += err.file.replace('/', '\\00002f');
+        err_msg_css += ':';
+        err_msg_css += err.line;
+        err_msg_css += '"; }';
+
+        file.path = ext(file.path, '.css');
+        file.contents = new Buffer(err_msg_css);
+        return cb(null, file);
       }
 
       if (typeof opts.onError === 'function') {
