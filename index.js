@@ -113,6 +113,33 @@ var gulpSass = function gulpSass(options, sync) {
       filePath = filePath ? filePath : file.path;
       relativePath = path.relative(process.cwd(), filePath);
 
+      if (options.errLogToCSS) {
+        var err_msg_css = 'html { padding: 18px 36px; }' +
+                       'head { display: block; }' +
+                       'body { margin: 0; padding: 0; }' +
+                       'body > * { display: none !important; }' +
+                       'head:after, body:before, body:after { display: block !important; }' +
+                       'head:after { font-family: sans-serif; font-size: large; font-weight: bold; content: "Error compiling CSS asset"; }' +
+                       'body:before, body:after { font-family: monospace; white-space: pre-wrap; }';
+
+        err_msg_css += 'body:before { content: "\\00000a';
+        err_msg_css += error.message.replace(/"/g, '\\000022').replace(/\n/g, '\\00000a').replace(/\t/g, '    ');
+        err_msg_css += '"; }';
+
+        err_msg_css += 'body:after { content: "\\00000a';
+        err_msg_css += relativePath.replace('/', '\\00002f');
+        err_msg_css += ':';
+        err_msg_css += err.line;
+        err_msg_css += ':';
+        err_msg_css += err.column;
+        err_msg_css += '"; }';
+
+        file.contents = new Buffer(err_msg_css);
+        file.path = gutil.replaceExtension(file.path, '.css');
+
+        return cb(null, file);
+      }
+
       message += gutil.colors.underline(relativePath) + '\n';
       message += gutil.colors.gray('  ' + error.line + ':' + error.column) + '  ';
       message += error.message;
