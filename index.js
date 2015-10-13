@@ -96,7 +96,7 @@ var gulpSass = function gulpSass(options, sync) {
       filePath = filePath ? filePath : file.path;
       relativePath = path.relative(process.cwd(), filePath);
 
-      if (opts.errLogToCSS) {
+      if (options.errLogToCSS) {
         message = 'html { padding: 18px 36px; }' +
                   'head { display: block; }' +
                   'body { margin: 0; padding: 0; }' +
