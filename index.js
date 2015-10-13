@@ -120,7 +120,13 @@ var gulpSass = function gulpSass(options, sync) {
         file.contents = new Buffer(message);
         file.path = gutil.replaceExtension(file.path, '.css');
 
-        return cb(null, file);
+        message  = gutil.colors.underline(relativePath) + '\n';
+        message += gutil.colors.gray('  ' + error.line + ':' + error.column) + '  ';
+        message += error.message;
+
+        return cb(new gutil.PluginError(
+          PLUGIN_NAME, message
+        ), file);
       }
 
       message += gutil.colors.underline(relativePath) + '\n';
