@@ -114,37 +114,6 @@ var gulpSass = function gulpSass(options, sync) {
       filePath = filePath ? filePath : file.path;
       relativePath = path.relative(process.cwd(), filePath);
 
-      if (opts.errLogToBrowser) {
-        message = 'html { padding: 18px 36px; }' +
-                  'head { display: block; }' +
-                  'body { margin: 0; padding: 0; }' +
-                  'body > * { display: none !important; }' +
-                  'head:after, body:before, body:after { display: block !important; }' +
-                  'head:after { font-family: sans-serif; font-size: large; font-weight: bold; content: "Error compiling CSS asset"; }' +
-                  'body:before, body:after { font-family: monospace; white-space: pre-wrap; }';
-
-        message += 'body:before { content: "\\00000a';
-        message += error.message.replace(/"/g, '\\000022').replace(/\n/g, '\\00000a').replace(/\t/g, '    ');
-        message += '"; }';
-
-        message += 'body:after { content: "\\00000a';
-        message += relativePath.replace('/', '\\00002f');
-        message += ':';
-        message += error.line;
-        message += ':';
-        message += error.column;
-        message += '"; }';
-
-        file.contents = new Buffer(message);
-        file.path = gutil.replaceExtension(file.path, '.css');
-
-        message =  gutil.colors.underline(relativePath) + '\n';
-        message += gutil.colors.gray('  ' + error.line + ':' + error.column) + '  ';
-        message += error.message;
-
-        return cb(new gutil.PluginError(PLUGIN_NAME, message), file);
-      }
-
       message += gutil.colors.underline(relativePath) + '\n';
       message += error.formatted;
 
@@ -152,6 +121,33 @@ var gulpSass = function gulpSass(options, sync) {
       // error.message = gutil.colors.stripColor(message);
 
       error.relativePath = relativePath
+
+      if (opts.errLogToBrowser) {
+        stylesheet = 'html { padding: 18px 36px; }' +
+                  'head { display: block; }' +
+                  'body { margin: 0; padding: 0; }' +
+                  'body > * { display: none !important; }' +
+                  'head:after, body:before, body:after { display: block !important; }' +
+                  'head:after { font-family: sans-serif; font-size: large; font-weight: bold; content: "Error compiling CSS asset"; }' +
+                  'body:before, body:after { font-family: monospace; white-space: pre-wrap; }';
+
+        stylesheet += 'body:before { content: "\\00000a';
+        stylesheet += error.message.replace(/"/g, '\\000022').replace(/\n/g, '\\00000a').replace(/\t/g, '    ');
+        stylesheet += '"; }';
+
+        stylesheet += 'body:after { content: "\\00000a';
+        stylesheet += relativePath.replace('/', '\\00002f');
+        stylesheet += ':';
+        stylesheet += error.line;
+        stylesheet += ':';
+        stylesheet += error.column;
+        stylesheet += '"; }';
+
+        file.contents = new Buffer(stylesheet);
+        file.path = gutil.replaceExtension(file.path, '.css');
+
+        return cb(new gutil.PluginError(PLUGIN_NAME, error), file);
+      }
 
       return cb(new gutil.PluginError(
           PLUGIN_NAME, error
