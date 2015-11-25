@@ -118,7 +118,7 @@ var gulpSass = function gulpSass(options, sync) {
       message += error.formatted;
 
       error.messageFormatted = message;
-      error.message = gutil.colors.stripColor(message);
+      // error.message = gutil.colors.stripColor(message);
 
       return cb(new gutil.PluginError(
           PLUGIN_NAME, error
