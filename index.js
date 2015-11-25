@@ -123,13 +123,13 @@ var gulpSass = function gulpSass(options, sync) {
       error.relativePath = relativePath
 
       if (opts.errLogToBrowser) {
-        stylesheet = 'html { padding: 18px 36px; }' +
-                  'head { display: block; }' +
-                  'body { margin: 0; padding: 0; }' +
-                  'body > * { display: none !important; }' +
-                  'head:after, body:before, body:after { display: block !important; }' +
-                  'head:after { font-family: sans-serif; font-size: large; font-weight: bold; content: "Error compiling CSS asset"; }' +
-                  'body:before, body:after { font-family: monospace; white-space: pre-wrap; }';
+        var stylesheet = 'html { padding: 18px 36px; }' +
+                         'head { display: block; }' +
+                         'body { margin: 0; padding: 0; }' +
+                         'body > * { display: none !important; }' +
+                         'head:after, body:before, body:after { display: block !important; }' +
+                         'head:after { font-family: sans-serif; font-size: large; font-weight: bold; content: "Error compiling CSS asset"; }' +
+                         'body:before, body:after { font-family: monospace; white-space: pre-wrap; }';
 
         stylesheet += 'body:before { content: "\\00000a';
         stylesheet += error.message.replace(/"/g, '\\000022').replace(/\n/g, '\\00000a').replace(/\t/g, '    ');
