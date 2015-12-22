@@ -148,6 +148,22 @@ describe('gulp-sass -- async compile', function() {
       err.message.indexOf('test/scss/error.scss').should.not.equal(-1);
       // Error must include line and column error occurs on
       err.message.indexOf('on line 2').should.not.equal(-1);
+      // Error must include relativePath property
+      err.relativePath.should.equal('test/scss/error.scss');
+      done();
+    });
+    stream.write(errorFile);
+  });
+
+  it('should preserve the original sass error message', function(done) {
+    var errorFile = createVinyl('error.scss');
+    var stream = sass();
+
+    stream.on('error', function(err) {
+      // Error must include original error message
+      err.messageOriginal.indexOf('property "font" must be followed by a \':\'').should.not.equal(-1);
+      // Error must not format or change the original error message
+      err.messageOriginal.indexOf('on line 2').should.equal(-1);
       done();
     });
     stream.write(errorFile);
@@ -379,6 +395,7 @@ describe('gulp-sass -- sync compile', function() {
 
     stream.on('error', function(err) {
       err.message.indexOf('property "font" must be followed by a \':\'').should.not.equal(-1);
+      err.relativePath.should.equal('test/scss/error.scss');
       done();
     });
     stream.write(errorFile);

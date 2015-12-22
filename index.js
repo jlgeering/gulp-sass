@@ -116,7 +116,8 @@ var gulpSass = function gulpSass(options, sync) {
     errorM = function errorM(error) {
       var relativePath = '',
           filePath = error.file === 'stdin' ? file.path : error.file,
-          message = '';
+          message = '',
+          stylesheet = '';
 
       filePath = filePath ? filePath : file.path;
       relativePath = path.relative(process.cwd(), filePath);
@@ -125,21 +126,22 @@ var gulpSass = function gulpSass(options, sync) {
       message += error.formatted;
 
       error.messageFormatted = message;
-      // error.message = gutil.colors.stripColor(message);
+      error.messageOriginal = error.message;
+      error.message = gutil.colors.stripColor(message);
 
-      error.relativePath = relativePath
+      error.relativePath = relativePath;
 
       if (opts.errLogToBrowser) {
-        var stylesheet = 'html { padding: 18px 36px; }' +
-                         'head { display: block; }' +
-                         'body { margin: 0; padding: 0; }' +
-                         'body > * { display: none !important; }' +
-                         'head:after, body:before, body:after { display: block !important; }' +
-                         'head:after { font-family: sans-serif; font-size: large; font-weight: bold; content: "Error compiling CSS asset"; }' +
-                         'body:before, body:after { font-family: monospace; white-space: pre-wrap; }';
+        stylesheet = 'html { padding: 18px 36px; }' +
+                     'head { display: block; }' +
+                     'body { margin: 0; padding: 0; }' +
+                     'body > * { display: none !important; }' +
+                     'head:after, body:before, body:after { display: block !important; }' +
+                     'head:after { font-family: sans-serif; font-size: large; font-weight: bold; content: "Error compiling CSS asset"; }' +
+                     'body:before, body:after { font-family: monospace; white-space: pre-wrap; }';
 
         stylesheet += 'body:before { content: "\\00000a';
-        stylesheet += error.message.replace(/"/g, '\\000022').replace(/\n/g, '\\00000a').replace(/\t/g, '    ');
+        stylesheet += error.messageOriginal.replace(/"/g, '\\000022').replace(/\n/g, '\\00000a').replace(/\t/g, '    ');
         stylesheet += '"; }';
 
         stylesheet += 'body:after { content: "\\00000a';
